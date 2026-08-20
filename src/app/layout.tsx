@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Latent",
+  title: "Weframe's Got Latent",
   description: "An eight-question show, not a job form.",
   robots: { index: false, follow: false },
 };
