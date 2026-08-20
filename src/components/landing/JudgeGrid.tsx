@@ -5,24 +5,24 @@ import { JudgeCard, type Judge } from "./JudgeCard";
 
 const JUDGES: Judge[] = [
   {
-    name: "Durgesh",
+    name: "Bishen",
     role: "Host",
-    note: "Reads every answer out loud with zero filter and maximum dramatic effect.",
+    note: "Reads every answer out loud with zero filter and keeps the show moving.",
+  },
+  {
+    name: "Durgesh",
+    role: "Judge",
+    note: "Rates the most unhinged choices with brutal, unapologetic honesty.",
   },
   {
     name: "Akash",
-    role: "Co-Host",
+    role: "Judge",
     note: "Spotter of subtle blunders. Never lets an embarrassing detail slip by.",
   },
   {
     name: "Ankita",
     role: "Judge",
-    note: "Rates the most unhinged choices with brutal, unapologetic honesty.",
-  },
-  {
-    name: "Bishen",
-    role: "Judge",
-    note: "Hurls real feedback before the 3-minute timer even gets close.",
+    note: "Evaluates every confession with high standards and maximum drama.",
   },
   {
     name: "Sambit",

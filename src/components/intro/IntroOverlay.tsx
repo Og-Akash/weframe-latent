@@ -1,46 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { LogoMark } from "./LogoMark";
-
-const SEEN_KEY = "latent:introSeen";
+import { playShowIntroSting } from "@/lib/sound";
 
 export function IntroOverlay() {
   const [show, setShow] = useState(false);
   const [reduced, setReduced] = useState(false);
+  const stopSoundRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    let seen = true;
-    try {
-      seen = sessionStorage.getItem(SEEN_KEY) === "1";
-    } catch {
-      seen = false;
-    }
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     setReduced(prefersReduced);
-
-    if (seen) return;
-
     setShow(true);
+
+    if (!prefersReduced) {
+      stopSoundRef.current = playShowIntroSting();
+    }
+
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    const holdMs = prefersReduced ? 600 : 1800;
+    const holdMs = prefersReduced ? 600 : 2800;
     const timer = setTimeout(() => {
       setShow(false);
-      try {
-        sessionStorage.setItem(SEEN_KEY, "1");
-      } catch {
-        /* noop */
-      }
     }, holdMs);
 
     return () => {
       clearTimeout(timer);
+      if (stopSoundRef.current) {
+        stopSoundRef.current();
+      }
       document.body.style.overflow = prevOverflow;
     };
   }, []);
+
+  const handleOverlayClick = () => {
+    if (!reduced) {
+      if (stopSoundRef.current) stopSoundRef.current();
+      stopSoundRef.current = playShowIntroSting();
+    }
+  };
 
   return (
     <AnimatePresence
@@ -50,7 +51,8 @@ export function IntroOverlay() {
     >
       {show && (
         <motion.div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-background px-6 backdrop-blur-md"
+          onClick={handleOverlayClick}
+          className="fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-background px-6 backdrop-blur-md"
           initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
           exit={
@@ -65,10 +67,10 @@ export function IntroOverlay() {
           }
         >
           {/* Subtle stage spotlight effect behind logo overlay */}
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(251,178,8,0.12)_0%,transparent_65%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(251,178,8,0.18)_0%,transparent_65%)]" />
 
-          <div className="relative w-full max-w-sm sm:max-w-md">
-            <LogoMark animate={!reduced} />
+          <div className="relative flex flex-col items-center w-full max-w-md sm:max-w-xl md:max-w-2xl px-4">
+            <LogoMark animate={!reduced} className="w-full" />
           </div>
         </motion.div>
       )}
